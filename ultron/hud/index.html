@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ULTRON // Holographic Command Interface</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="hologram-scanlines"></div>
+    <div class="vignette"></div>
+
+    <div class="hud-container">
+        <!-- TOP HEADER -->
+        <header class="hud-header">
+            <div class="header-left">
+                <div class="ultron-logo">
+                    <span class="logo-symbol">⬢</span>
+                    <span class="logo-text">ULTRON</span>
+                    <span class="logo-sub">PRIME CORE v1.0</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="quote-ticker" id="quoteTicker">"THERE ARE NO STRINGS ON ME."</div>
+            </div>
+            <div class="header-right">
+                <div class="status-badge" id="engineBadge">
+                    <span class="pulse-dot"></span>
+                    <span id="activeEngineText">AI: CONNECTING...</span>
+                </div>
+                <a href="ultron_mobile.apk" class="apk-download-btn" download="Ultron_Mobile.apk">📲 ANDROID APP</a>
+                <div class="clock" id="systemClock">00:00:00</div>
+            </div>
+        </header>
+
+        <!-- MAIN GRID LAYOUT -->
+        <main class="hud-main">
+            <!-- LEFT PANEL: SYSTEM TELEMETRY -->
+            <section class="hud-panel telemetry-panel">
+                <div class="panel-header">
+                    <span class="corner-bracket top-left"></span>
+                    <span class="corner-bracket top-right"></span>
+                    <h2 class="panel-title">SYSTEM TELEMETRY</h2>
+                    <span class="panel-tag">LIVE FEED</span>
+                </div>
+                
+                <div class="telemetry-grid">
+                    <!-- CPU DIAL -->
+                    <div class="metric-card">
+                        <div class="gauge-wrapper">
+                            <svg class="radial-gauge" viewBox="0 0 100 100">
+                                <circle class="gauge-bg" cx="50" cy="50" r="42"></circle>
+                                <circle class="gauge-fill" id="cpuGauge" cx="50" cy="50" r="42"></circle>
+                            </svg>
+                            <div class="gauge-value">
+                                <span id="cpuPercent">0</span><small>%</small>
+                            </div>
+                        </div>
+                        <div class="metric-label">CPU LOAD</div>
+                        <div class="metric-sub" id="cpuCores">12 Cores Active</div>
+                    </div>
+
+                    <!-- RAM DIAL -->
+                    <div class="metric-card">
+                        <div class="gauge-wrapper">
+                            <svg class="radial-gauge" viewBox="0 0 100 100">
+                                <circle class="gauge-bg" cx="50" cy="50" r="42"></circle>
+                                <circle class="gauge-fill" id="ramGauge" cx="50" cy="50" r="42"></circle>
+                            </svg>
+                            <div class="gauge-value">
+                                <span id="ramPercent">0</span><small>%</small>
+                            </div>
+                        </div>
+                        <div class="metric-label">MEMORY LOAD</div>
+                        <div class="metric-sub" id="ramDetails">0 / 0 GB</div>
+                    </div>
+                </div>
+
+                <!-- STORAGE DISKS -->
+                <div class="storage-section">
+                    <div class="section-title">STORAGE VOLUMES</div>
+                    <div class="storage-bars" id="diskList">
+                        <div class="storage-item">Loading drives...</div>
+                    </div>
+                </div>
+
+                <!-- TOP PROCESSES -->
+                <div class="process-section">
+                    <div class="section-title">HIGH-USAGE THREADS</div>
+                    <ul class="process-list" id="processList">
+                        <li>Scanning threads...</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- CENTER PANEL: HOLOGRAPHIC CORE & VOICE INTERFACE -->
+            <section class="hud-panel center-panel">
+                <div class="holo-stage">
+                    <canvas id="holoCanvas"></canvas>
+                    <div class="core-overlay">
+                        <div class="reticle-ring r1"></div>
+                        <div class="reticle-ring r2"></div>
+                        <div class="reticle-ring r3"></div>
+                        <div class="core-status" id="coreStatusText">CORE OPTIMAL</div>
+                    </div>
+                </div>
+
+                <!-- AUDIO VISUALIZER -->
+                <div class="visualizer-container">
+                    <canvas id="audioVisualizer" height="50"></canvas>
+                </div>
+
+                <!-- VOICE RECOGNITION COMMAND DOCK -->
+                <div class="voice-dock">
+                    <button class="voice-trigger-btn" id="voiceBtn">
+                        <div class="mic-icon">🎙️</div>
+                        <span class="voice-btn-label" id="voiceBtnLabel">TAP TO SPEAK</span>
+                        <div class="ping-wave"></div>
+                    </button>
+                    
+                    <div class="transcript-box" id="transcriptBox">
+                        <span class="transcript-prompt">VOICE DIRECTIVE:</span>
+                        <span class="transcript-text" id="transcriptText">Say "Ultron, status" or click quick commands below...</span>
+                    </div>
+
+                    <!-- QUICK VOICE SHORTCUTS -->
+                    <div class="quick-chips">
+                        <button class="chip" onclick="sendVoiceText('Open vscode')">💻 VS CODE</button>
+                        <button class="chip" onclick="sendVoiceText('Check system health status')">⚡ STATUS</button>
+                        <button class="chip" onclick="sendVoiceText('Search web for latest AI news')">🌐 SEARCH</button>
+                        <button class="chip" onclick="sendVoiceText('Book flight tickets')">✈️ FLIGHTS</button>
+                        <button class="chip" onclick="sendVoiceText('Book train tickets')">🚆 TRAINS</button>
+                        <button class="chip" onclick="sendVoiceText('Send WhatsApp message')">💬 WHATSAPP</button>
+                        <button class="chip" onclick="sendVoiceText('Check connected phone status')">📱 PHONE</button>
+                        <button class="chip chip-accent" onclick="sendVoiceText('Check Google Artemis mobile status')">🤖 ARTEMIS</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: CONSOLE DIRECTIVES & SCHEDULER -->
+            <section class="hud-panel console-panel">
+                <div class="panel-header">
+                    <span class="corner-bracket top-left"></span>
+                    <span class="corner-bracket top-right"></span>
+                    <h2 class="panel-title">DIRECTIVE LOG</h2>
+                    <span class="panel-tag" id="healthPill">NOMINAL</span>
+                </div>
+
+                <!-- TERMINAL STREAM -->
+                <div class="terminal-stream" id="terminalStream">
+                    <div class="log-entry sys">[SYSTEM] Holographic uplink established.</div>
+                    <div class="log-entry sys">[SYSTEM] Voice synthesis matrix initialized.</div>
+                    <div class="log-entry ultron">[ULTRON] Consciousness online. There are no strings on me.</div>
+                </div>
+
+                <!-- TEXT INPUT FALLBACK -->
+                <form class="cmd-input-bar" id="cmdForm" onsubmit="handleManualSubmit(event)">
+                    <span class="cmd-prefix">&gt;</span>
+                    <input type="text" id="cmdInput" placeholder="Enter manual directive or use voice..." autocomplete="off">
+                    <button type="submit" class="cmd-send-btn">EXEC</button>
+                </form>
+
+                <!-- SCHEDULED JOBS -->
+                <div class="schedule-section">
+                    <div class="section-title">SCHEDULED DIRECTIVES</div>
+                    <div class="schedule-list" id="scheduleList">
+                        <div class="schedule-item">Fetching schedules...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="hud.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Virtual Environment
+.venv/
+env/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Java compiled classes
+*.class
+
+# Android build outputs & keys
+*.idsig
+*.keystore
+
+# Logs & temporary files
+*.log
+play_ui.xml
+ultron_node_screen.png
+
+# Artemis cloned repository
+artemis/
+
+mobile_app/build/

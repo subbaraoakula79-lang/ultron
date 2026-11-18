@@ -1,0 +1,31 @@
+[
+    {
+        "id": "job-sys-health",
+        "name": "Periodic System Health Check",
+        "action": "health_check",
+        "args": {
+            "cpu_thresh": 80.0,
+            "ram_thresh": 85.0
+        },
+        "trigger_type": "interval",
+        "interval_seconds": 300,
+        "enabled": true,
+        "last_run": null,
+        "next_run": 1794637095.5823112,
+        "run_count": 0
+    },
+    {
+        "id": "job-temp-clean",
+        "name": "Daily Temp Cache Cleanup",
+        "action": "clean_temp",
+        "args": {
+            "older_than_days": 1.0
+        },
+        "trigger_type": "interval",
+        "interval_seconds": 86400,
+        "enabled": true,
+        "last_run": null,
+        "next_run": 1794640635.5823135,
+        "run_count": 0
+    }
+]
