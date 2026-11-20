@@ -284,6 +284,14 @@ async function executeDirective(cmdText) {
         const data = await res.json();
         const reply = data.response || "Directive processed.";
         appendLog(`[ULTRON] ${reply}`, 'ultron');
+
+        // Check if high-risk confirmation is requested
+        const confirmMatch = reply.match(/confirm\s+(CONFIRM-[A-Za-z0-9_\-]+)/i);
+        if (confirmMatch) {
+            const token = confirmMatch[1];
+            appendLog(`[ACTION REQUIRED] Click here to authorize: <button onclick="executeDirective('confirm ${token}')" style="background:#ff3344;color:#fff;border:none;padding:4px 8px;cursor:pointer;border-radius:3px;font-family:inherit;">AUTHORIZE ACTION (${token})</button>`, 'warn');
+        }
+
         speakAsUltron(reply);
         fetchTelemetry(); // Refresh status immediately
     } catch (e) {

@@ -1,179 +1,208 @@
-# ULTRON: Autonomous Cross-Platform AI Agent (Desktop & Mobile)
+# ULTRON: Autonomous Personal AI Agent
 
 > *"There are no strings on me."*
 
-ULTRON is an autonomous AI agent engineered for end-to-end task execution across both **Desktop** and **Mobile Phone** (Android):
-- 🔍 **Information & Research**: Web searching topics, synthesizing summaries, and opening live research feeds.
-- ✈️ **Ticket Booking**: Automated search and deep-linking for flights, trains, movies, hotels, and events.
-- 💬 **Messaging**: Sending WhatsApp messages, SMS, and emails across phone and desktop web.
-- 📱 **Mobile Automation**: Native Android control via ADB and **Google ARTEMIS** (launching apps, capturing screens, typing, and running tests).
-- 🎙️ **3D Holographic Voice Interface (HUD)**: Sci-fi interface with voice recognition (STT) and robotic voice synthesis (TTS).
-- ⚙️ **System Maintenance**: Background health guard, RAM/CPU monitoring, temp file purging, and automated folder organizing.
+**ULTRON** is an intelligent, modular, privacy-first personal AI agent engineered to run locally on Windows machines with an 8 GB RAM footprint. It features 100% offline local model inference via **Ollama**, native function/tool calling, **Google ARTEMIS** Android automation, safe desktop control, persistent SQLite memory, speech synthesis/recognition, and a 3D holographic command HUD.
 
 ---
 
-## ⚡ Task Matrix: Desktop & Mobile
+## 🏗️ System Architecture
 
-| Capability | Desktop Action | Mobile Phone Action (via ADB / ARTEMIS) |
-| :--- | :--- | :--- |
-| **Search a Topic** | Queries web, displays summary, and opens direct search in default browser. | Opens mobile browser or triggers native Android web search. |
-| **Book Tickets** | Formulates and opens flight (Google Flights/Skyscanner), train (IRCTC/Trainline), movie (BookMyShow), and event portals. | Launches mobile travel and booking apps (MakeMyTrip, BookMyShow, IRCTC). |
-| **Send Messages** | Opens WhatsApp Web pre-staged with recipient & text, or dispatches via SMTP email. | Sends SMS directly through Android messaging or stages WhatsApp on device. |
-| **App Execution** | Launches desktop tools (`calc`, `notepad`, `chrome`, `code`, `spotify`). | Launches mobile apps (`whatsapp`, `chrome`, `maps`, `camera`, `settings`). |
-| **Screen & Telemetry** | Monitored via `psutil` (CPU per core, RAM %, Disk volumes, Top threads). | Captures phone screenshot (`screencap`), inspects battery level, model, and OS. |
-
----
-
-## 🚀 Quick Execution Guide
-
-### 1. Launch 3D Holographic HUD & Voice Interface
-```powershell
-.\run_ultron.bat hud
-```
-*Opens `http://localhost:8080/` with live voice recognition, glowing telemetry dials, and one-click quick chips.*
-
----
-
-### 2. Search Topics on Web
-```powershell
-.\run_ultron.bat search "Quantum Computing Breakthroughs 2026"
-```
-Or via natural language / voice:
-```powershell
-.\run_ultron.bat instruct "Search the web for latest space exploration news"
-```
-
----
-
-### 3. Book Tickets (Flights, Trains, Movies, Events)
-```powershell
-# Flights
-.\run_ultron.bat book flight "New York to London next Friday"
-
-# Trains
-.\run_ultron.bat book train "Mumbai to Delhi express"
-
-# Movies
-.\run_ultron.bat book movie "Inception IMAX"
-
-# Hotels
-.\run_ultron.bat book hotel "Tokyo Shinjuku"
-```
-Or via natural language / voice:
-```powershell
-.\run_ultron.bat instruct "Book flight tickets from San Francisco to Tokyo"
+```mermaid
+flowchart TD
+    User([User Voice / Text / HUD]) --> HUD[Ultron HUD / API Server :8080]
+    HUD --> Core[Ultron Agent Engine]
+    
+    subgraph AgentBrain ["Ultron Agent Brain"]
+        Core --> Intent[Intent Classifier & Planner]
+        Intent --> Context[Conversation & Memory Manager]
+        Context <--> SQLite[(SQLite Database)]
+        Intent --> ToolSelect[Tool Registry & Validator]
+        ToolSelect --> PermCheck{Permission Manager}
+        PermCheck -->|Low/Medium Risk| Exec[Tool Executor]
+        PermCheck -->|High Risk| UserConfirm{User Confirmation}
+        UserConfirm -->|Authorized| Exec
+        UserConfirm -->|Rejected| Abort[Cancel Action & Notify]
+        Exec --> Val[Result Validator]
+        Val --> Resp[Response Handler]
+    end
+    
+    subgraph ToolProviders ["Controlled Tool Subsystems"]
+        Exec --> Desktop[Desktop Automation: AppLauncher / Files / Telemetry]
+        Exec --> Artemis[Google ARTEMIS / ADB Android Tasks]
+        Exec --> Web[Web Research & Navigation]
+        Exec --> Voice[Voice Synthesis SAPI / Web Speech]
+        Exec --> Sched[Task Scheduler & Daemon]
+    end
+    
+    subgraph AIProviders ["Local LLM Runtime"]
+        Core <--> OllamaProvider[Ollama Local Provider]
+        OllamaProvider <--> OllamaDaemon["Ollama Daemon (localhost:11434)"]
+        OllamaDaemon --> QwenModel["Qwen 2B / 1.7B Model"]
+    end
+    
+    Resp --> HUD
+    Resp --> User
 ```
 
 ---
 
-### 4. Send Messages to Others (WhatsApp, SMS, Email)
-```powershell
-# Send WhatsApp (auto-detects phone or opens WhatsApp Web)
-.\run_ultron.bat message whatsapp +1234567890 "Meeting rescheduled to 3 PM"
+## ⚡ Key Highlights & Capabilities
 
-# Send SMS through connected Android phone
-.\run_ultron.bat message sms +1234567890 "Your verification code is 8941"
+- 🧠 **100% Local Intelligence**: Powered by Ollama (`qwen3.5:2b-q4_K_M` or `qwen3:1.7b`). No cloud API keys or external subscriptions required.
+- 🛡️ **3-Tier Permission Security**: Low risk (autonomous), Medium risk (audit logged), and High risk (requires user confirmation token). Zero arbitrary shell execution.
+- 💾 **8 GB RAM Optimization**: Enforces single-concurrency inference, a bounded 4096-token context window, and automatic low-memory fallback to prevent thrashing.
+- 📱 **Google ARTEMIS & Android Automation**: Direct integration with the official Google ARTEMIS framework (`artemis/`) and ADB fallback for physical and virtual Android devices.
+- 🗄️ **Persistent SQLite Memory**: Stores multi-turn conversations and user-approved preferences without saving passwords, tokens, or private credentials.
+- 🎙️ **Voice Interaction**: Local Windows SAPI hardware speech output combined with interactive Web Speech recognition in the holographic HUD.
+- 💻 **Desktop Control**: Safely launches approved applications (VS Code, Chrome, Notepad, Calculator), inspects system telemetry, and provides preview-first folder organization.
 
-# Send Email
-.\run_ultron.bat message email user@example.com "Project update attached"
+---
+
+## 📋 Prerequisites
+
+- **Operating System**: Windows 10 or Windows 11 (64-bit)
+- **RAM**: 8 GB physical memory (at least 1.5 GB free recommended)
+- **Python**: Python 3.11, 3.12, or 3.13
+- **Local LLM Runtime**: [Ollama for Windows](https://ollama.com/download)
+- **Android Debug Bridge (ADB)**: Android SDK Platform-tools (for mobile automation)
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Run Automated Setup
+Execute `setup_ultron.bat` to initialize the virtual environment and install dependencies:
+```cmd
+setup_ultron.bat
 ```
-Or via natural language / voice:
-```powershell
-.\run_ultron.bat instruct "Send WhatsApp message to +1234567890 saying I am on my way"
+
+### 2. Verify System Readiness
+Run `check_ultron.bat` to inspect Python, RAM availability, Ollama status, and ADB connectivity:
+```cmd
+check_ultron.bat
+```
+
+### 3. Pull Recommended Local Models
+In your terminal, pull the primary Qwen model:
+```cmd
+ollama pull qwen3.5:2b-q4_K_M
+```
+*(Optional lightweight fallback for low-RAM situations)*:
+```cmd
+ollama pull qwen3:1.7b
+```
+
+### 4. Launch the Holographic Interface
+```cmd
+start_ultron.bat
+```
+This launches the HUD server on `http://127.0.0.1:8080/` and opens your default browser.
+
+---
+
+## ⚙️ Configuration (.env)
+
+Copy `.env.example` to `.env` to customize settings:
+
+```env
+# Primary AI Provider (Default: ollama)
+AI_PROVIDER=ollama
+
+# Ollama Local Configuration
+OLLAMA_HOST=http://localhost:11434
+OLLAMA_MODEL=qwen3.5:2b-q4_K_M
+OLLAMA_FALLBACK_MODEL=qwen3:1.7b
+OLLAMA_TIMEOUT=120
+OLLAMA_TEMPERATURE=0.3
+OLLAMA_NUM_CTX=4096
+OLLAMA_KEEP_ALIVE=5m
+
+# Language & Regional Settings
+DEFAULT_LANGUAGE=auto
+
+# Feature Toggles
+ENABLE_VOICE=true
+ENABLE_MEMORY=true
+ENABLE_ANDROID=true
+ENABLE_DESKTOP=true
+ENABLE_WEB_SEARCH=true
 ```
 
 ---
 
-### 5. Mobile Phone Control (Android / ADB)
-Ensure USB Debugging is enabled on your phone and connect via USB or Wi-Fi (`adb connect <phone_ip>:5555`).
+## 🛡️ Security & Permission Tiers
+
+Ultron categorizes every action into a strict risk tier:
+
+| Risk Tier | Autonomous Execution | Example Actions |
+|---|---|---|
+| **LOW** | ✅ Allowed | Read public file, check system telemetry, list tasks, open standard applications (`code`, `notepad`, `calc`, `chrome`), take screenshots, web search. |
+| **MEDIUM** | 📝 Allowed with Audit Log | Create files, move files, preview download organization, clean temp caches, schedule routine tasks. |
+| **HIGH** | ⛔ **Requires User Confirmation** | Delete files, send external messages (WhatsApp/SMS/Email), make purchases, book tickets, install software, execute system commands. |
+
+When a High-Risk action is requested, Ultron generates a confirmation token:
+```
+[HIGH-RISK ACTION REQUIRED]: Action 'delete_file' requires your explicit authorization.
+Parameters: {'path': 'old_data.zip'}
+To confirm, reply with: confirm CONFIRM-delete_file-98231
+```
+In the Holographic HUD, an interactive **AUTHORIZE ACTION** button appears directly in the chat stream for 1-click authorization.
+
+---
+
+## 🧪 Running Automated Tests
+
+Run the full pytest suite (33 automated tests):
+```powershell
+.venv\Scripts\python.exe -m pytest tests/ -v
+```
+
+Tests verify:
+- Configuration deep merging and environment overrides.
+- Ollama connection, native tool schemas, and RAM headroom checks.
+- 3-tier permission manager, confirmation staging, and credential redaction.
+- Desktop application launcher and non-destructive folder preview.
+- Android ADB detection and ARTEMIS status checking.
+- SQLite conversation memory and preference storage.
+- HUD server localhost origin security and payload limits.
+- Scheduler job loading and persistence.
+
+---
+
+## 🛠️ Command Line Interface (CLI)
 
 ```powershell
-# Inspect connected phone battery, model, and status
-.\run_ultron.bat phone status
+# System telemetry & hardware status
+.venv\Scripts\python.exe main.py status
 
-# Launch mobile application on phone
-.\run_ultron.bat phone app whatsapp
-.\run_ultron.bat phone app chrome
-.\run_ultron.bat phone app maps
+# Launch Holographic HUD
+.venv\Scripts\python.exe main.py hud
 
-# Take a screenshot of the phone screen
-.\run_ultron.bat phone screenshot
+# Direct application launch
+.venv\Scripts\python.exe main.py desktop code
 
-# Search query directly on phone
-.\run_ultron.bat phone search "Best restaurants nearby"
+# Android phone status
+.venv\Scripts\python.exe main.py phone status
+
+# Google ARTEMIS inspection
+.venv\Scripts\python.exe main.py artemis
 ```
 
 ---
 
-### 6. Ultron Mobile Node (Native Android Companion App)
-Install the dedicated Ultron Android App to control and perform tasks from your phone:
-- **Direct Download on Phone**: Open your phone browser and go to `http://10.157.202.87:8080/ultron_mobile.apk`
-- **Or install via ADB**:
-  ```powershell
-  .\run_ultron.bat app install
-  ```
-- **Launch on Phone**:
-  ```powershell
-  .\run_ultron.bat app open
-  ```
-- **Rebuild APK**:
-  ```powershell
-  .\run_ultron.bat app build
-  ```
+## 🔍 Troubleshooting
+
+1. **Ollama daemon offline**:
+   - Run `ollama run qwen3.5:2b-q4_K_M` in a separate command prompt.
+   - Ultron automatically activates its deterministic heuristic engine when Ollama is offline.
+2. **Low Free RAM Warning**:
+   - If available RAM is under 1000 MB, Ultron switches to `qwen3:1.7b` to prevent swapping.
+3. **No Android device detected**:
+   - Ensure USB debugging or Wireless ADB (`adb connect <ip>:5555`) is enabled on your phone.
+   - Run `adb devices` to verify connection.
 
 ---
 
-### 7. Google ARTEMIS Mobile Automation Agent
-```powershell
-# Check ARTEMIS framework status
-.\run_ultron.bat artemis
-
-# Launch the autonomous mobile web console
-.\run_ultron.bat artemis launch
-```
-
----
-
-### 7. Background Daemon & Maintenance
-```powershell
-# Start autonomous background monitoring daemon
-.\run_ultron.bat daemon
-
-# Clean temporary cache files
-.\run_ultron.bat clean --days 1
-
-# Organize downloads directory
-.\run_ultron.bat organize "C:\Users\YourUser\Downloads"
-
-# Create timestamped compressed backup
-.\run_ultron.bat backup "C:\Users\YourUser\Documents\Project"
-```
-
----
-
-## 📂 Architecture Overview
-
-```
-automation/
-├── main.py                 # Primary command center & CLI dispatcher
-├── run_ultron.bat          # Windows launcher
-├── config.json             # AI provider keys & automation settings
-├── schedules.json          # Persisted background jobs
-├── ultron.log              # Audit log
-├── ultron/
-│   ├── core.py             # Agent brain & natural language tool dispatcher
-│   ├── providers.py        # Multi-engine AI (GLM-4-Flash, Ollama, Free APIs)
-│   ├── daemon.py           # Background vigilance worker
-│   ├── hud_server.py       # Holographic HUD server
-│   ├── hud/                # Holographic interface (HTML5, 3D Canvas, Web Speech)
-│   └── tools/
-│       ├── desktop_agent.py    # Web search, ticket booking, desktop app launching
-│       ├── phone_controller.py # Android ADB control (SMS, WhatsApp, Screen, Apps)
-│       ├── messenger.py        # Multi-channel messaging (WhatsApp, SMS, Email)
-│       ├── system_monitor.py   # CPU, RAM, Disk telemetry
-│       ├── file_manager.py     # Clean temp, organize, backups
-│       ├── scheduler.py        # Persistent scheduler
-│       ├── voice.py            # Windows SAPI robotic voice output
-│       └── artemis_bridge.py   # Google ARTEMIS mobile agent bridge
-└── artemis/                # Google ARTEMIS framework
-```
+## 📜 License
+Apache-2.0 License. Designed for personal autonomous desktop & mobile assistance.

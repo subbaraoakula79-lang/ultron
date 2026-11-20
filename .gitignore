@@ -24,3 +24,5 @@ ultron_node_screen.png
 artemis/
 
 mobile_app/build/
+
+*.db

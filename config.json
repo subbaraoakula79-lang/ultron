@@ -1,14 +1,13 @@
 {
-    "providers": {
-        "glm_api_key": "0e4d06a5a0df410d8c115ada01cd1472.AaZpQHfiEbnSG_MIdJ1e5WUh",
-        "glm_model": "glm-4-flash",
-        "glm_endpoint": "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-    },
+    "ai_provider": "ollama",
     "ollama": {
         "host": "http://localhost:11434",
-        "model": "llama3:latest",
-        "timeout_seconds": 60,
-        "temperature": 0.3
+        "model": "qwen3.5:2b-q4_K_M",
+        "fallback_model": "qwen3:1.7b",
+        "timeout_seconds": 120,
+        "temperature": 0.3,
+        "num_ctx": 4096,
+        "keep_alive": "5m"
     },
     "automation": {
         "daemon_tick_interval_seconds": 5,
@@ -29,5 +28,13 @@
         "log_file": "ultron.log",
         "log_level": "INFO",
         "desktop_notifications": true
+    },
+    "features": {
+        "enable_voice": true,
+        "enable_memory": true,
+        "enable_android": true,
+        "enable_desktop": true,
+        "enable_web_search": true,
+        "default_language": "auto"
     }
 }
